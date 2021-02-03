@@ -9,10 +9,10 @@
 		<version>2.4.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ufps.springboot.datajpa.app</groupId>
-	<artifactId>spring-boot-Data-jpa</artifactId>
+	<groupId>com.ufps.springboot.jwt.app</groupId>
+	<artifactId>spring-boot-jwt</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-boot-Data-jpa</name>
+	<name>spring-boot-jwt</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -111,6 +111,23 @@
 			<artifactId>jaxb-runtime</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+			<version>0.11.2</version>
+			<scope>runtime</scope>
+		</dependency>
 
 	</dependencies>
 
