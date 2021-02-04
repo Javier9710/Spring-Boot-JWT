@@ -1,17 +1,38 @@
 package com.ufps.springboot.app.auth.filter;
 
+import java.io.IOException;
+import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.map.HashedMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
+	
+	//public static final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
+	@Autowired
 	private AuthenticationManager authenticationManager;
 	
 	
@@ -51,6 +72,40 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		
 		return authenticationManager.authenticate(authToken);
+	
+	
+	}
+
+
+	@Override
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			Authentication authResult) throws IOException, ServletException {
+		
+		SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+		
+		
+		
+		//SecretKey secretKey = new SecretKeySpec("algunaLlaveSecreta".getBytes(), SignatureAlgorithm.HS256.getJcaName());
+		
+		String username = ((User) authResult.getPrincipal()).getUsername();
+		
+		String token = Jwts.builder()
+                .setSubject(username)
+                .signWith(secretKey)
+                .compact();
+		
+		
+		response.addHeader("Authorization", "Bearer " + token);
+		
+		Map<String, Object> body = new HashMap<String, Object>();
+		body.put("token", token);
+		body.put("user", (User) authResult.getPrincipal());
+		body.put("mensaje", String.format("Hola %s, Has iniciado sesion con exito", username));
+		
+		response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+		response.setStatus(200);
+		response.setContentType("application/json");
+		
 	}
 	
 	

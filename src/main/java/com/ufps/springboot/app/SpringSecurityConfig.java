@@ -53,14 +53,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 		.logout().permitAll()
 		.and()
-<<<<<<< HEAD
 		.exceptionHandling().accessDeniedPage("/error_403")*/
 		.and()
 		.addFilter(new JWTAuthenticationFilter(authenticationManager()))
-=======
-		.exceptionHandling().accessDeniedPage("/error_403")
-		.and()
->>>>>>> 947f4454142f9ac6a4572a04972f2983f7e6f1bc
 		.csrf().disable()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
