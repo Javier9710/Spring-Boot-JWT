@@ -1,6 +1,7 @@
 package com.ufps.springboot.app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 //import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +18,7 @@ public class ClienteRestController {
 	private IClienteService clienteService;
 	
 	@RequestMapping(value = {"/listar"}, method = RequestMethod.GET)
+	@Secured("ROLE_ADMIN")
 	public ClienteList listar() {
 		
 		return new ClienteList(clienteService.findAll());

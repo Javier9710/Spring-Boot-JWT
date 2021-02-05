@@ -37,7 +37,7 @@ import io.jsonwebtoken.security.Keys;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 	
-	//public static final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+	public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -111,7 +111,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 		
-		SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+		//SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 		
 		
 		
@@ -127,7 +127,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		String token = Jwts.builder()
 				.setClaims(claims)
                 .setSubject(username)
-                .signWith(secretKey)
+                .signWith(SECRET_KEY)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000L))
                 .compact();
@@ -145,7 +145,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		response.setStatus(200);
 		response.setContentType("application/json");
 		
-		logger.info("Clave: "+ secretKey.getEncoded());
+		logger.info("Clave: "+ SECRET_KEY.getEncoded());
 		
 	}
 	@Override
