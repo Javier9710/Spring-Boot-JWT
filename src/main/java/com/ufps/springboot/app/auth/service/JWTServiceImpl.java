@@ -28,6 +28,14 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JWTServiceImpl implements JWTService {
 	
+	public static final long EXPIRATION_DATE = 14000000L;
+	
+	public static final String TOKEN_PREFIX = "Bearer ";
+	
+	public static final String HEADER_STRING = "Authorization";
+	
+	public static final String AUTHORITIES = "authorities";
+	
 	public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
 	@Override
@@ -43,18 +51,18 @@ public class JWTServiceImpl implements JWTService {
 		Collection<? extends GrantedAuthority> roles = auth.getAuthorities();
 		
 		Claims claims = Jwts.claims();
-		claims.put("authorities", new ObjectMapper().writeValueAsString(roles));
+		claims.put(AUTHORITIES, new ObjectMapper().writeValueAsString(roles));
 		
 		String token = Jwts.builder()
 				.setClaims(claims)
                 .setSubject(username)
                 .signWith(SECRET_KEY)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000L))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_DATE))
                 .compact();
 		
 		
-		return null;
+		return token;
 	}
 
 	@Override
@@ -90,7 +98,7 @@ public class JWTServiceImpl implements JWTService {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getRoles(String token) throws JsonParseException, JsonMappingException, IOException {
-		Object roles = getClaims(token).get("authorities");
+		Object roles = getClaims(token).get(AUTHORITIES);
 		
 		Collection<? extends GrantedAuthority> authorities = Arrays.asList(new ObjectMapper()
 				.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthoritiesMixin.class)
@@ -101,8 +109,8 @@ public class JWTServiceImpl implements JWTService {
 
 	@Override
 	public String resolve(String token) {
-		if (token != null && token.startsWith("Bearer ")) {
-			return token.replace("Bearer ", "");
+		if (token != null && token.startsWith(TOKEN_PREFIX)) {
+			return token.replace(TOKEN_PREFIX, "");
 		}
 		return null;
 		

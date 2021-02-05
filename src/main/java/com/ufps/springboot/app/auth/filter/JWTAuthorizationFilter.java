@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.ufps.springboot.app.auth.service.JWTService;
+import com.ufps.springboot.app.auth.service.JWTServiceImpl;
 
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
@@ -33,7 +34,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		
 		//SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-		String header = request.getHeader("authorization");
+		String header = request.getHeader(JWTServiceImpl.HEADER_STRING);
 
 		if (!requiresAuthentication(header)) {
 			chain.doFilter(request, response);
@@ -56,7 +57,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	
 
 	protected boolean requiresAuthentication(String header) {
-		if (header == null || !header.startsWith("Bearer ")) {
+		if (header == null || !header.startsWith(JWTServiceImpl.TOKEN_PREFIX)) {
 			return false;
 
 		}
